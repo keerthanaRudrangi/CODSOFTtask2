@@ -1,0 +1,87 @@
+import java.util.Scanner;
+import java.util.HashMap;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+public class WordCounter {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Word Counter Program");
+
+        String inputText = getInputText(scanner);
+        String[] words = splitTextIntoWords(inputText);
+        int totalWords = words.length;
+
+        System.out.println("Total words: " + totalWords);
+
+        // Uncomment the following lines to implement additional features:
+        // 7. Ignoring common words or stop words
+        // 8. Providing statistics like the number of unique words or the frequency of each word
+        // analyzeWords(words);
+
+        scanner.close();
+    }
+
+    private static String getInputText(Scanner scanner) {
+        System.out.println("Enter 'text' to provide text input, or 'file' to provide a file path:");
+        String inputType = scanner.nextLine().toLowerCase();
+
+        if (inputType.equals("text")) {
+            System.out.println("Enter your text:");
+            return scanner.nextLine();
+        } else if (inputType.equals("file")) {
+            System.out.println("Enter the file path:");
+            String filePath = scanner.nextLine();
+            return readTextFromFile(filePath);
+        } else {
+            System.out.println("Invalid input type.");
+            return "";
+        }
+    }
+
+    private static String readTextFromFile(String filePath) {
+        StringBuilder text = new StringBuilder();
+        try {
+            Scanner fileScanner = new Scanner(new File(filePath));
+            while (fileScanner.hasNextLine()) {
+                text.append(fileScanner.nextLine()).append(" ");
+            }
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+        }
+        return text.toString();
+    }
+
+    private static String[] splitTextIntoWords(String text) {
+        return text.split("[\\s.,;!?]+");
+    }
+
+    // Additional feature: Ignoring common words or stop words
+    private static void analyzeWords(String[] words) {
+        HashMap<String, Integer> wordFrequency = new HashMap<>();
+        for (String word : words) {
+            // You can add more common words to this array
+            String[] commonWords = {"the", "and", "of", "in", "to", "a", "is", "with"};
+            if (!word.isEmpty() && !contains(commonWords, word.toLowerCase())) {
+                wordFrequency.put(word, wordFrequency.getOrDefault(word, 0) + 1);
+            }
+        }
+
+        System.out.println("Unique words: " + wordFrequency.size());
+
+        for (String word : wordFrequency.keySet()) {
+            System.out.println(word + ": " + wordFrequency.get(word) + " occurrences");
+        }
+    }
+
+    private static boolean contains(String[] array, String target) {
+        for (String element : array) {
+            if (element.equals(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
